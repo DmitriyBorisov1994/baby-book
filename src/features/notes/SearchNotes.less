@@ -1,0 +1,17 @@
+.searchnotes {
+   background-color: white;
+   border-radius: @border-radius-base;
+   padding: .5rem;
+   box-shadow: 0px 7px 9px -1px @border-color-split;
+   transition: box-shadow 0.3s;
+   position: sticky;
+   top: 1rem;
+
+   &:hover {
+      box-shadow: 0px 7px 9px 3px @border-color-split;
+   }
+
+   @media (min-width:576px) {
+      padding: 2rem;
+   }
+}
