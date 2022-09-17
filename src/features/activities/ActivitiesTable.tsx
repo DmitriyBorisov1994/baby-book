@@ -6,19 +6,24 @@ const ActivitiesTable = () => {
 
    const columns = [
       {
+         title: 'Проснулся',
+         dataIndex: 'endSleep',
+         key: 'endSleep',
+      },
+      {
          title: 'Поел',
          dataIndex: 'eat',
          key: 'eat',
       },
       {
+         title: 'Сколько поел',
+         dataIndex: 'eatAmount',
+         key: 'eatAmount',
+      },
+      {
          title: 'Уснул',
          dataIndex: 'startSleep',
          key: 'startSleep',
-      },
-      {
-         title: 'Проснулся',
-         dataIndex: 'endSleep',
-         key: 'endSleep',
       },
    ];
 
@@ -26,12 +31,14 @@ const ActivitiesTable = () => {
       {
          key: '1',
          eat: '15:00',
+         eatAmount: '150мл',
          startSleep: '21:00',
          endSleep: '24:00',
       },
       {
          key: '2',
          eat: '12:00',
+         eatAmount: '150мл',
          startSleep: '17:00',
          endSleep: '18:30',
       },
@@ -39,7 +46,7 @@ const ActivitiesTable = () => {
 
    return (
       <div>
-         <Table pagination={false} dataSource={dataSource} columns={columns} />
+         <Table scroll={{ x: true }} pagination={false} dataSource={dataSource} columns={columns} />
       </div>
    )
 }

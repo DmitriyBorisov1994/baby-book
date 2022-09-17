@@ -1,6 +1,7 @@
-import { authApiSlice } from './../features/auth/authApiSlice';
+import { apiSlice } from './../features/api/apiSlice';
 import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice'
+
 import {
   persistStore,
   persistReducer,
@@ -14,7 +15,7 @@ import {
 import storage from 'redux-persist/lib/storage'
 
 const rootReducer = combineReducers({
-  [authApiSlice.reducerPath]: authApiSlice.reducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
   auth: authReducer
 })
 
@@ -33,7 +34,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(authApiSlice.middleware)
+    }).concat(apiSlice.middleware)
 });
 
 export const persistor = persistStore(store)

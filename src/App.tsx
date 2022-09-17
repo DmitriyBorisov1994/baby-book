@@ -5,6 +5,7 @@ import AppPublic from './components/AppPublic';
 import Layout from './components/Layout';
 import RequireAuth from './components/RequireAuth';
 import AuthPage from './pages/AuthPage';
+import EditNotePage from './pages/EditNotePage';
 import NotesPage from './pages/NotesPage';
 
 
@@ -17,6 +18,7 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route path="home" element={<p>homepage</p>} />
           <Route path='notes' element={<NotesPage />} />
+          <Route path='edit/:noteId' element={<EditNotePage />} />
           <Route path='posts' element={<p>postspage</p>} />
         </Route>
 

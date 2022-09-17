@@ -1,5 +1,5 @@
+import { apiSlice } from './../api/apiSlice';
 import { firebaseSignIn, firebaseSignUp } from './firebaseAuth';
-import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export type AuthQueryArg = {
    email: string,
@@ -7,9 +7,7 @@ export type AuthQueryArg = {
    confirmPassword?: string
 }
 
-export const authApiSlice = createApi({
-   baseQuery: fakeBaseQuery(),
-   tagTypes: ['Auth'],
+export const authApiSlice = apiSlice.injectEndpoints({
    endpoints: (build) => ({
       signIn: build.mutation({
          queryFn: async (arg: AuthQueryArg) => {
