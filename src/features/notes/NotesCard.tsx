@@ -6,6 +6,8 @@ import TodoList from '../todos/TodoList';
 import ActivitiesTable from '../activities/ActivitiesTable';
 import { Note } from './notesApiSlice';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../app/hooks';
+import { selectTodosByNoteId } from '../todos/todosApiSlice';
 
 const { Meta } = Card;
 const { Paragraph, Title } = Typography;
@@ -13,11 +15,28 @@ const { Panel } = Collapse;
 
 type NoteCardProps = {
    note: Note,
+   isTodosLoading?: boolean,
+   isTodosSuccess?: boolean,
+   isTodosError?: boolean,
 }
 
-const NotesCard: React.FC<NoteCardProps> = ({ note }) => {
+const NotesCard: React.FC<NoteCardProps> = ({ note, isTodosError, isTodosLoading, isTodosSuccess }) => {
 
    const navigate = useNavigate()
+
+   const todos = useAppSelector((state) => selectTodosByNoteId(state, note.noteId))
+
+   let todosContent
+
+   if (todos && !todos.length) {
+      todosContent = <p>У вас нет списка дел на сегодня</p>
+   } else if (isTodosSuccess && todos) { // что если не будет тудушек????
+      todosContent = <TodoList todos={todos} />
+   } else if (isTodosError) {
+      todosContent = <p>Ошибка</p>
+   } else if (isTodosLoading) {
+      todosContent = <p>Загружаю...</p>
+   }
 
    return (
       <Card
@@ -55,7 +74,7 @@ const NotesCard: React.FC<NoteCardProps> = ({ note }) => {
          <Card.Grid hoverable className='card-grid card-grid-nopadding'>
             <Collapse bordered={false} ghost accordion>
                <Panel header="Нужно сделать" key="1">
-                  <TodoList />
+                  {todosContent}
                </Panel>
                <Panel header="Сон и кормление" key="2">
                   <ActivitiesTable />

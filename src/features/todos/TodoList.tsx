@@ -1,28 +1,25 @@
 import { List, Typography, Checkbox } from 'antd'
 import React from 'react'
 import './TodoList.less'
+import { Todo } from './todosApiSlice'
 
 const { Text } = Typography
 
-const TodoList: React.FC = () => {
+type TodoListProps = {
+   todos: Todo[]
+}
+
+const TodoList: React.FC<TodoListProps> = ({ todos }) => {
    return (
       <div>
          <List size="large">
-            <List.Item className='list-item'>
-               <div className='list-content-wrapper'>
-                  <Text>Lorem ipsum dolor sit amet.</Text> <Checkbox />
-               </div>
-            </List.Item>
-            <List.Item className='list-item'>
-               <div className='list-content-wrapper'>
-                  <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, consequatur?</Text> <Checkbox />
-               </div>
-            </List.Item>
-            <List.Item className='list-item'>
-               <div className='list-content-wrapper'>
-                  <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem impedit sint soluta quisquam nulla natus consequatur culpa ipsa facilis quaerat?</Text> <Checkbox />
-               </div>
-            </List.Item>
+            {todos.map(todo => (
+               <List.Item key={todo.todoId} className='list-item'>
+                  <div className='list-content-wrapper'>
+                     <Text>{todo.text}</Text> <Checkbox checked={todo.completed} />
+                  </div>
+               </List.Item>
+            ))}
          </List>
       </div>
    )

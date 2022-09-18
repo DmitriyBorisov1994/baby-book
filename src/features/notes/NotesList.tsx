@@ -1,8 +1,8 @@
-import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { Col, Row } from 'antd'
 import React from 'react'
 import { useAppSelector } from '../../app/hooks'
-import { selectNoteBySearch, selectNoteById, useGetNotesQuery } from './notesApiSlice'
+import { useGetTodosQuery } from '../todos/todosApiSlice'
+import { selectNoteBySearch, useGetNotesQuery } from './notesApiSlice'
 import NotesCard from './NotesCard'
 import './NotesList.less'
 
@@ -18,15 +18,29 @@ const NotesList: React.FC<NoteListProps> = ({ searchByDate, searchByTitle }) => 
       isError,
       error } = useGetNotesQuery('')
 
-   const notes = useAppSelector((state) => selectNoteBySearch(state, searchByTitle, searchByDate)) //temp!!!
-   //const noteById = useAppSelector((state) => selectNoteById(state, '')) // temp!!!
+   const { isLoading: isTodosLoading,
+      isSuccess: isTodosSuccess,
+      isError: isTodosError,
+      error: todosError } = useGetTodosQuery('')
 
-   console.log(notes)
+   const notes = useAppSelector((state) => selectNoteBySearch(state, searchByTitle, searchByDate))
+
+   //console.log(notes)
 
    let content
 
    if (isSuccess) {
-      content = notes?.map(note => <Col xs={24} lg={12}><div className='notescard-wrapper'><NotesCard note={note} /></div></Col>)
+      content = notes?.map(note =>
+         <Col xs={24} lg={12}>
+            <div className='notescard-wrapper'>
+               <NotesCard
+                  note={note}
+                  isTodosLoading={isTodosLoading}
+                  isTodosSuccess={isTodosSuccess}
+                  isTodosError={isTodosError}
+               />
+            </div>
+         </Col>)
    } else if (isError) {
       content = <Col xs={24} lg={12}><p>Ошибка</p></Col>
    } else if (isLoading) {
