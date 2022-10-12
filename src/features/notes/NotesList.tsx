@@ -1,6 +1,7 @@
 import { Col, Row } from 'antd'
 import React from 'react'
 import { useAppSelector } from '../../app/hooks'
+import { useGetActivitiesQuery } from '../activities/activitiesApiSlice'
 import { useGetTodosQuery } from '../todos/todosApiSlice'
 import { selectNoteBySearch, useGetNotesQuery } from './notesApiSlice'
 import NotesCard from './NotesCard'
@@ -23,6 +24,11 @@ const NotesList: React.FC<NoteListProps> = ({ searchByDate, searchByTitle }) => 
       isError: isTodosError,
       error: todosError } = useGetTodosQuery('')
 
+   const { isLoading: isActivitiesLoading,
+      isSuccess: isActivitiesSuccess,
+      isError: isActivitiesError,
+      error: ActivitiesError } = useGetActivitiesQuery('')
+
    const notes = useAppSelector((state) => selectNoteBySearch(state, searchByTitle, searchByDate))
 
    //console.log(notes)
@@ -38,6 +44,9 @@ const NotesList: React.FC<NoteListProps> = ({ searchByDate, searchByTitle }) => 
                   isTodosLoading={isTodosLoading}
                   isTodosSuccess={isTodosSuccess}
                   isTodosError={isTodosError}
+                  isActivitiesLoading={isActivitiesLoading}
+                  isActivitiesSuccess={isActivitiesSuccess}
+                  isActivitiesError={isActivitiesError}
                />
             </div>
          </Col>)

@@ -1,8 +1,14 @@
 import { Table } from 'antd'
 import React from 'react'
+import { Activity } from './activitiesApiSlice'
 
 
-const ActivitiesTable = () => {
+type ActivitiesTableProps = {
+   activities: Activity[],
+}
+
+const ActivitiesTable: React.FC<ActivitiesTableProps> = ({ activities }) => {
+   console.log(activities)
 
    const columns = [
       {
@@ -12,8 +18,8 @@ const ActivitiesTable = () => {
       },
       {
          title: 'Поел',
-         dataIndex: 'eat',
-         key: 'eat',
+         dataIndex: 'eatTime',
+         key: 'eatTime',
       },
       {
          title: 'Сколько поел',
@@ -27,22 +33,7 @@ const ActivitiesTable = () => {
       },
    ];
 
-   const dataSource = [
-      {
-         key: '1',
-         eat: '15:00',
-         eatAmount: '150мл',
-         startSleep: '21:00',
-         endSleep: '24:00',
-      },
-      {
-         key: '2',
-         eat: '12:00',
-         eatAmount: '150мл',
-         startSleep: '17:00',
-         endSleep: '18:30',
-      },
-   ];
+   const dataSource = activities
 
    return (
       <div>
