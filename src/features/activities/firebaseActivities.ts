@@ -12,11 +12,11 @@ export const firebaseGetActivities = async (userId: string) => {
    }
 }
 
-/*export const firebaseDeleteNote = (userId: string, noteId: string) => {
-   return remove(ref(db, `/notes/${userId}/${noteId}`))
+export const firebaseDeleteActivity = (userId: string, activityId: string) => {
+   return remove(ref(db, `/activities/${userId}/${activityId}`))
 }
 
-export const firebaseUpdateNote = (userId: string, noteId: string, note: Note) => {
+/*export const firebaseUpdateNote = (userId: string, noteId: string, note: Note) => {
    return update(ref(db, `/${userId}/notes/${noteId}`), { ...note })
 }
 

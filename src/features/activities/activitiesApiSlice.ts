@@ -1,5 +1,5 @@
 import { apiSlice } from './../api/apiSlice';
-import { firebaseGetActivities } from './firebaseActivities';
+import { firebaseDeleteActivity, firebaseGetActivities } from './firebaseActivities';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
@@ -32,11 +32,18 @@ export const activitiesApiSlice = apiSlice.injectEndpoints({
             }
          },
          providesTags: [{ type: 'Activities' }]
-      })
+      }),
+      deleteActivity: build.mutation({
+         queryFn: async ({ userId, activityId }) => {
+            await firebaseDeleteActivity(userId, activityId)
+            return { data: 'deleted' }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Activities', id: arg.activityId }]
+      }),
    }),
 })
 
-export const { useGetActivitiesQuery } = activitiesApiSlice
+export const { useGetActivitiesQuery, useDeleteActivityMutation } = activitiesApiSlice
 
 const selectActivitiesResult = activitiesApiSlice.endpoints.getActivities.select('')
 

@@ -31,8 +31,6 @@ const NotesList: React.FC<NoteListProps> = ({ searchByDate, searchByTitle }) => 
 
    const notes = useAppSelector((state) => selectNoteBySearch(state, searchByTitle, searchByDate))
 
-   //console.log(notes)
-
    let content
 
    if (isSuccess) {

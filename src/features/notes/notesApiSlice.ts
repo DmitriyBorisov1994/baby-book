@@ -1,5 +1,5 @@
 import { apiSlice } from './../api/apiSlice';
-import { firebaseGetNotes } from './firebaseNotes';
+import { firebaseDeleteNote, firebaseGetNotes } from './firebaseNotes';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
@@ -29,11 +29,18 @@ export const notesApiSlice = apiSlice.injectEndpoints({
             }
          },
          providesTags: [{ type: 'Notes' }]
-      })
+      }),
+      deleteNote: build.mutation({
+         queryFn: async ({ userId, noteId }) => {
+            await firebaseDeleteNote(userId, noteId)
+            return { data: 'deleted' }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Notes' }]
+      }),
    }),
 })
 
-export const { useGetNotesQuery } = notesApiSlice
+export const { useGetNotesQuery, useDeleteNoteMutation } = notesApiSlice
 
 const selectNotesResult = notesApiSlice.endpoints.getNotes.select('')
 

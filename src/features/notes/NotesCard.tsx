@@ -4,11 +4,11 @@ import { Typography, Card, Collapse } from 'antd';
 import './NotesCard.less'
 import TodoList from '../todos/TodoList';
 import ActivitiesTable from '../activities/ActivitiesTable';
-import { Note } from './notesApiSlice';
+import { Note, useDeleteNoteMutation } from './notesApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { selectTodosByNoteId } from '../todos/todosApiSlice';
-import { selectActivitiesByNoteId } from '../activities/activitiesApiSlice';
+import { selectActivitiesByNoteId, useDeleteActivityMutation } from '../activities/activitiesApiSlice';
 
 const { Meta } = Card;
 const { Paragraph, Title } = Typography;
@@ -38,6 +38,11 @@ const NotesCard: React.FC<NoteCardProps> = (
 
    const todos = useAppSelector((state) => selectTodosByNoteId(state, note.noteId))
    const activities = useAppSelector((state) => selectActivitiesByNoteId(state, note.noteId))
+   const userId = useAppSelector((state) => state.auth.userId)
+
+   const [deleteNote] = useDeleteNoteMutation()
+   const [deleteTodo] = useDeleteNoteMutation()
+   const [deleteActivity] = useDeleteActivityMutation()
 
    let todosContent
 
@@ -63,6 +68,13 @@ const NotesCard: React.FC<NoteCardProps> = (
       activitiesContent = <p>Загружаю...</p>
    }
 
+   const onDeleteNoteClick = async (userId: string, noteId: string) => {
+      await deleteNote({ userId, noteId })
+      if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
+      if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
+      alert('Заметка удалена')
+   }
+
    return (
       <Card
          hoverable={true}
@@ -77,7 +89,11 @@ const NotesCard: React.FC<NoteCardProps> = (
             />
          }
          actions={[
-            <div className='card-actionsWrapper'>
+            <div className='card-actionsWrapper'
+               onClick={() => {
+                  if (userId) onDeleteNoteClick(userId, note.noteId)
+               }
+               }>
                <DeleteOutlined key="delete" />
                <span>Удалить</span>
             </div>,

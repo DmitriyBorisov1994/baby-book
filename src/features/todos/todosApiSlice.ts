@@ -1,4 +1,4 @@
-import { firebaseGetTodos } from './firebaseTodos';
+import { firebaseDeleteTodo, firebaseGetTodos } from './firebaseTodos';
 import { apiSlice } from './../api/apiSlice';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
@@ -29,11 +29,18 @@ export const notesApiSlice = apiSlice.injectEndpoints({
             }
          },
          providesTags: [{ type: 'Todos' }]
-      })
+      }),
+      deleteTodo: build.mutation({
+         queryFn: async ({ userId, todoId }) => {
+            await firebaseDeleteTodo(userId, todoId)
+            return { data: 'deleted' }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Todos', id: arg.todoId }]
+      }),
    }),
 })
 
-export const { useGetTodosQuery } = notesApiSlice
+export const { useGetTodosQuery, useDeleteTodoMutation } = notesApiSlice
 
 const selectTodosResult = notesApiSlice.endpoints.getTodos.select('')
 
