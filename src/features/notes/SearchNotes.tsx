@@ -1,9 +1,11 @@
 import React from 'react'
 import './SearchNotes.less'
-import { Typography, Input, Row, Col, DatePicker, Divider } from 'antd';
+import { Typography, Input, Row, Col, DatePicker, Divider, Form, Button } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import type { DatePickerProps } from 'antd';
 import { } from 'antd';
 import './NotesCard.less'
+import AddNote from './AddNote';
 
 
 const { Title } = Typography
@@ -38,7 +40,6 @@ const SearchNotes: React.FC<SearchNotesProps> = ({ setSearchByTitle, setSearchBy
             <Col xs={24} sm={12} md={24}>
                <DatePicker
                   placeholder="По дате"
-                  //value={searchByDate}
                   onChange={(date, dateString) => {
                      console.log(dateString)
                      setSearchByDate(dateString)
@@ -47,6 +48,10 @@ const SearchNotes: React.FC<SearchNotesProps> = ({ setSearchByTitle, setSearchBy
                   style={{ width: '100%' }} />
             </Col>
          </Row>
+         <Divider />
+         <Title level={3} className='card-title'>Добавить заметку:</Title>
+         <Divider />
+         <AddNote />
       </section>
    )
 }
