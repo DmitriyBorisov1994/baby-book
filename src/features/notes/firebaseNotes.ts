@@ -20,8 +20,8 @@ export const firebaseUpdateNote = (userId: string, noteId: string, note: Note) =
    return update(ref(db, `/${userId}/notes/${noteId}`), { ...note })
 }
 
-export const firebaseAddNote = (userId: string, note: Note) => {
-   return set(ref(db, `/notes/${userId}/${note.noteId}`), {
-      ...note
+export const firebaseAddNote = (userId: string, newNote: Note) => {
+   return set(ref(db, `/notes/${userId}/${newNote.noteId}`), {
+      ...newNote
    });
 }

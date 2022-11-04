@@ -17,11 +17,11 @@ export const firebaseDeleteTodo = (userId: string, todoId: string) => {
 }
 
 export const firebaseUpdateTodo = (userId: string, todoId: string, todo: Todo) => {
-   return update(ref(db, `/${userId}/todos/${todoId}`), { ...todo })
+   return update(ref(db, `/todos/${userId}/${todoId}`), { ...todo })
 }
 
-export const firebaseAddTodo = (userId: string, todo: Todo) => {
-   return set(ref(db, `/todos/${userId}/${todo.todoId}`), {
-      ...todo
+export const firebaseAddTodo = (userId: string, newTodo: Todo) => {
+   return set(ref(db, `/todos/${userId}/${newTodo.todoId}`), {
+      ...newTodo
    });
 }

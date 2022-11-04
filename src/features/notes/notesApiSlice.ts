@@ -1,5 +1,5 @@
 import { apiSlice } from './../api/apiSlice';
-import { firebaseDeleteNote, firebaseGetNotes } from './firebaseNotes';
+import { firebaseDeleteNote, firebaseGetNotes, firebaseAddNote, firebaseUpdateNote } from './firebaseNotes';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
@@ -19,7 +19,6 @@ export const notesApiSlice = apiSlice.injectEndpoints({
    endpoints: (build) => ({
       getNotes: build.query({
          queryFn: async (userId: string) => {
-            console.log('start loading...')
             const { notes, notesIds } = await firebaseGetNotes(userId)
             return {
                data: {
@@ -37,10 +36,24 @@ export const notesApiSlice = apiSlice.injectEndpoints({
          },
          invalidatesTags: (result, error, arg) => [{ type: 'Notes' }]
       }),
+      addNote: build.mutation({
+         queryFn: async ({ userId, newNote }) => {
+            await firebaseAddNote(userId, newNote)
+            return { data: "New note added" }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Notes' }]
+      }),
+      updateNote: build.mutation({
+         queryFn: async ({ userId, updatedNote }) => {
+            await firebaseUpdateNote(userId, updatedNote.noteId, updatedNote)
+            return { data: "note has been updated" }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Notes' }]
+      }),
    }),
 })
 
-export const { useGetNotesQuery, useDeleteNoteMutation } = notesApiSlice
+export const { useGetNotesQuery, useDeleteNoteMutation, useAddNoteMutation, useUpdateNoteMutation } = notesApiSlice
 
 const selectNotesResult = notesApiSlice.endpoints.getNotes.select('')
 

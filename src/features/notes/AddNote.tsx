@@ -1,14 +1,55 @@
 import React from 'react'
 import { Typography, Input, Row, Col, DatePicker, Divider, Form, Button } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { useAddNoteMutation } from './notesApiSlice';
+import { nanoid } from '@reduxjs/toolkit';
+import { useAddTodoMutation } from '../todos/todosApiSlice';
+import { useAddActivityMutation } from '../activities/activitiesApiSlice';
+import { useAppSelector } from '../../app/hooks';
 const { Title } = Typography
 
-const AddNote = () => {
+const AddNote: React.FC = () => {
+
+   const [addNote] = useAddNoteMutation()
+   const [addTodo] = useAddTodoMutation()
+   const [addActivity] = useAddActivityMutation()
+
+   const userId = useAppSelector((state) => state.auth.userId)
+
    return (
       <Form
-         onFinish={(values: any) => {
+         onFinish={async (values: any) => {
             console.log('Success:', values);
-            console.log(values.date.format('DD/MM/YYYY'))
+            if (userId) {
+               const noteId = `Note_${nanoid()}`
+               const newNote = {
+                  title: values.title,
+                  text: values.text,
+                  noteDateString: values.date.format('DD/MM/YYYY'),
+                  noteId
+               }
+               await addNote({ userId, newNote })
+               if (values.todos) {
+                  await Promise.all(values.todos.map((todo: any) => {
+                     const newTodo = {
+                        todoId: `Todo_${nanoid()}`,
+                        noteId: noteId,
+                        text: todo
+                     }
+                     addTodo({ userId, newTodo })
+                  }))
+               }
+               if (values.activities) {
+                  await Promise.all(values.activities.map((activity: any) => {
+                     const newActivity = {
+                        id: `Activity_${nanoid()}`,
+                        noteId: noteId,
+                        ...activity
+                     }
+                     addActivity({ userId, newActivity })
+                  }))
+               }
+            }
          }}
       >
          <Row gutter={[16, 16]}>
@@ -27,7 +68,7 @@ const AddNote = () => {
                </Form.Item>
             </Col>
             <Col xs={24}>
-               <Form.Item>
+               <Form.Item name={"text"}>
                   <Input.TextArea placeholder="Введите текст" />
                </Form.Item>
             </Col>
@@ -95,7 +136,7 @@ const AddNote = () => {
                <Title level={4} className='card-title'>Активность:</Title>
             </Col>
             <Col xs={24} >
-               <Form.List name="actvities">
+               <Form.List name="activities">
                   {(fields, { add, remove }) => (
                      <>
                         {fields.map(field => (

@@ -1,4 +1,4 @@
-import { firebaseDeleteTodo, firebaseGetTodos } from './firebaseTodos';
+import { firebaseDeleteTodo, firebaseGetTodos, firebaseAddTodo, firebaseUpdateTodo } from './firebaseTodos';
 import { apiSlice } from './../api/apiSlice';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
@@ -37,10 +37,24 @@ export const notesApiSlice = apiSlice.injectEndpoints({
          },
          invalidatesTags: (result, error, arg) => [{ type: 'Todos', id: arg.todoId }]
       }),
+      addTodo: build.mutation({
+         queryFn: async ({ userId, newTodo }) => {
+            await firebaseAddTodo(userId, newTodo)
+            return { data: 'new todo added' }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Todos' }]
+      }),
+      updateTodo: build.mutation({
+         queryFn: async ({ userId, updatedTodo }) => {
+            await firebaseUpdateTodo(userId, updatedTodo.todoId, updatedTodo)
+            return { data: 'todo has been updated' }
+         },
+         invalidatesTags: (result, error, arg) => [{ type: 'Todos' }]
+      }),
    }),
 })
 
-export const { useGetTodosQuery, useDeleteTodoMutation } = notesApiSlice
+export const { useGetTodosQuery, useDeleteTodoMutation, useAddTodoMutation, useUpdateTodoMutation } = notesApiSlice
 
 const selectTodosResult = notesApiSlice.endpoints.getTodos.select('')
 
@@ -66,21 +80,6 @@ export const selectTodosByNoteId = createSelector(
          return todos.filter(todo => todo.noteId === noteId) as Todo[]
    }
 )
-
-/*export const selectNoteBySearch = createSelector(
-   [selectAllNotes, (state: RootState, searchByTitle, searchByDate) => ({ searchByTitle, searchByDate })],
-   (notes, searchParams) => {
-      const { searchByTitle, searchByDate } = searchParams
-      if (notes && searchByTitle && !searchByDate) {
-         return notes.filter(note => note.title.includes(searchByTitle)) as Todo[]
-      } else if (notes && searchByDate && !searchByTitle) {
-         return notes.filter(note => note.noteDateString === searchByDate) as Todo[]
-      } else if (notes && searchByTitle && searchByDate) {
-         return notes.filter(note => note.title.includes(searchByTitle) && note.noteDateString == searchByDate) as Todo[]
-      } else if (notes) return notes
-
-   }
-)*/
 
 
 

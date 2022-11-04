@@ -1,10 +1,10 @@
 import React from 'react'
-import { Note } from './notesApiSlice';
+import { Note, useUpdateNoteMutation } from './notesApiSlice';
 import { Typography, Card, Collapse, Form, Input, DatePicker, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { Activity } from './../activities/activitiesApiSlice'
-import { Todo } from './../todos/todosApiSlice'
+import { Activity, useUpdateActivityMutation } from './../activities/activitiesApiSlice'
+import { Todo, useUpdateTodoMutation } from './../todos/todosApiSlice'
 
 type EditNoteProps = {
    note: Note,
@@ -17,7 +17,11 @@ const { Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
-   console.log(activities)
+
+   const [updateNote] = useUpdateNoteMutation()
+   const [updateTodo] = useUpdateTodoMutation()
+   const [updateActivity] = useUpdateActivityMutation()
+
    return (
       <Card
          hoverable={true}
@@ -180,7 +184,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
             </Form.List>
             <Form.Item>
                <Button type="primary" htmlType="submit">
-                  Добавить
+                  Сохранить изменения
                </Button>
             </Form.Item>
          </Form >
