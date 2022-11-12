@@ -72,7 +72,6 @@ const NotesCard: React.FC<NoteCardProps> = (
       await deleteNote({ userId, noteId })
       if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
       if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
-      alert('Заметка удалена')
    }
 
    return (

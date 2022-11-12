@@ -28,13 +28,13 @@ const AppHeader: React.FC = () => {
             mode="horizontal"
          >
             <Menu.Item key="home" icon={<HomeOutlined />} disabled={!userToken}>
-               <Link to={'/home'}>Домашняя</Link>
+               <Link to={'/'}>Домашняя</Link>
             </Menu.Item>
             <Menu.Item key="notes" icon={<ContainerOutlined />} disabled={!userToken}>
                <Link to={'/notes'}>Заметки</Link>
             </Menu.Item>
             <Menu.Item key="posts" icon={<IdcardOutlined />} disabled={!userToken}>
-               <Link to={'/posts'}>Посты</Link>
+               <Link to={'/add'}>Добавить новую заметку</Link>
             </Menu.Item>
             {!!userToken && <Menu.Item key="logout" icon={<LogoutOutlined />}>
                <span onClick={() => {

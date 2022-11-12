@@ -1,11 +1,10 @@
 import React from 'react'
 import './SearchNotes.less'
-import { Typography, Input, Row, Col, DatePicker, Divider, Form, Button } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Typography, Input, Row, Col, DatePicker } from 'antd';
 import type { DatePickerProps } from 'antd';
 import { } from 'antd';
 import './NotesCard.less'
-import AddNote from './AddNote';
+import { FileSearchOutlined } from '@ant-design/icons';
 
 
 const { Title } = Typography
@@ -19,17 +18,11 @@ type SearchNotesProps = {
 }
 
 const SearchNotes: React.FC<SearchNotesProps> = ({ setSearchByTitle, setSearchByDate, searchByTitle, searchByDate }) => {
-
-   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-      console.log(date, dateString);
-   };
-
    return (
       <section className='searchnotes'>
-         <Title level={3} className='card-title'>Искать:</Title>
-         <Divider />
+         <Title level={3} className='card-title'><FileSearchOutlined /> Поиск: </Title>
          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={24}>
+            <Col xs={24} sm={12}>
                <Search
                   placeholder="По названию"
                   allowClear
@@ -37,21 +30,16 @@ const SearchNotes: React.FC<SearchNotesProps> = ({ setSearchByTitle, setSearchBy
                   onChange={(e) => setSearchByTitle(e.target.value)}
                   style={{ width: '100%' }} />
             </Col>
-            <Col xs={24} sm={12} md={24}>
+            <Col xs={24} sm={12}>
                <DatePicker
                   placeholder="По дате"
                   onChange={(date, dateString) => {
-                     console.log(dateString)
                      setSearchByDate(dateString)
                   }}
                   format='DD/MM/YYYY'
                   style={{ width: '100%' }} />
             </Col>
          </Row>
-         <Divider />
-         <Title level={3} className='card-title'>Добавить заметку:</Title>
-         <Divider />
-         <AddNote />
       </section>
    )
 }

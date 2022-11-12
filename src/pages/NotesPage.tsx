@@ -10,10 +10,10 @@ const NotesPage: React.FC = () => {
 
    return (
       <Row gutter={[16, 16]}>
-         <Col xs={{ span: 24, order: 1 }} md={{ span: 8, order: 2 }}>
+         <Col xs={{ span: 24, order: 1 }}>
             <SearchNotes setSearchByTitle={setSearchByTitle} setSearchByDate={setSearchByDate} searchByTitle={searchByTitle} searchByDate={searchByDate} />
          </Col>
-         <Col xs={{ span: 24, order: 2 }} md={{ span: 16, order: 1 }}>
+         <Col xs={{ span: 24, order: 2 }}>
             <NotesList searchByTitle={searchByTitle} searchByDate={searchByDate} />
          </Col>
       </Row>

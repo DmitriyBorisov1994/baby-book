@@ -1,10 +1,13 @@
 import React from 'react'
-import { Note, useUpdateNoteMutation } from './notesApiSlice';
-import { Typography, Card, Collapse, Form, Input, DatePicker, Button } from 'antd';
+import { Note, useDeleteNoteMutation, useUpdateNoteMutation } from './notesApiSlice';
+import { Typography, Card, Collapse, Form, Input, DatePicker, Button, TimePicker, InputNumber } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { Activity, useUpdateActivityMutation } from './../activities/activitiesApiSlice'
-import { Todo, useUpdateTodoMutation } from './../todos/todosApiSlice'
+import { Activity, useAddActivityMutation, useDeleteActivityMutation, useUpdateActivityMutation } from './../activities/activitiesApiSlice'
+import { Todo, useAddTodoMutation, useDeleteTodoMutation, useUpdateTodoMutation } from './../todos/todosApiSlice'
+import { nanoid } from '@reduxjs/toolkit';
+import { useAppSelector } from '../../app/hooks';
+import { useNavigate } from 'react-router-dom';
 
 type EditNoteProps = {
    note: Note,
@@ -18,9 +21,27 @@ const { Panel } = Collapse;
 
 const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
 
+   const navigate = useNavigate()
+
+   const [deleteNote] = useDeleteNoteMutation()
    const [updateNote] = useUpdateNoteMutation()
+
+   const [addTodo] = useAddTodoMutation()
    const [updateTodo] = useUpdateTodoMutation()
+   const [deleteTodo] = useDeleteTodoMutation()
+
+   const [addActivity] = useAddActivityMutation()
    const [updateActivity] = useUpdateActivityMutation()
+   const [deleteActivity] = useDeleteActivityMutation()
+
+   const userId = useAppSelector((state) => state.auth.userId)
+
+   const onDeleteNoteClick = async (userId: string, noteId: string) => {
+      await deleteNote({ userId, noteId })
+      if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
+      if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
+      navigate(-1)
+   }
 
    return (
       <Card
@@ -37,13 +58,15 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
          }
          actions={[
             <div className='card-actionsWrapper'
-               onClick={() => { }}
+               onClick={() => {
+                  if (userId) onDeleteNoteClick(userId, note.noteId)
+               }}
             >
                <DeleteOutlined key="delete" />
                <span>Удалить</span>
             </div>,
             <div className='card-actionsWrapper'
-               onClick={() => { }}
+               onClick={() => { navigate(-1) }}
             >
                <EditOutlined key="edit" />
                <span>Назад</span>
@@ -51,28 +74,98 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
          ]}
       >
          <Form
-            onFinish={(values: any) => {
+            onFinish={async (values: any) => {
                console.log('Success:', values);
                console.log(values.date.format('DD/MM/YYYY'))
+
+               if (userId) {
+                  const noteId = note.noteId
+                  const updatedNote = {
+                     title: values.title,
+                     text: values.text,
+                     noteDateString: values.date.format('DD/MM/YYYY'),
+                     noteId
+                  }
+                  await updateNote({ userId, updatedNote })
+                  if (values.todos) {
+                     await Promise.all(values.todos.map((todo: any) => {
+                        if (!todo.todoId) {
+                           const newTodo = {
+                              todoId: `Todo_${nanoid()}`,
+                              noteId: noteId,
+                              text: todo.text
+                           }
+                           addTodo({ userId, newTodo })
+                        } else {
+                           updateTodo({ userId, todo })
+                        }
+                     }))
+                     if (todos) {
+                        await Promise.all(todos.map((prevTodo) => {
+                           const findTodo = values.todos.find((todo: any) => todo.todoId = prevTodo.todoId)
+                           if (!findTodo) deleteTodo({ userId, id: prevTodo.todoId })
+                        }))
+                     }
+                  }
+                  if (values.activities) {
+                     await Promise.all(values.activities.map((activity: any) => {
+                        if (!activity.id) {
+                           const newActivity = {
+                              id: `Activity_${nanoid()}`,
+                              noteId: noteId,
+                              eatTime: activity.eatTime.format('HH:mm'),
+                              endSleep: activity.endSleep.format('HH:mm'),
+                              startSleep: activity.startSleep.format('HH:mm'),
+                              eatAmount: activity.eatAmount
+                           }
+                           addActivity({ userId, newActivity })
+                        } else {
+                           const updatedActivity = {
+                              ...activity,
+                              eatTime: activity.eatTime.format('HH:mm'),
+                              endSleep: activity.endSleep.format('HH:mm'),
+                              startSleep: activity.startSleep.format('HH:mm'),
+                           }
+                           updateActivity({ userId, updatedActivity })
+                        }
+                     }))
+                     if (activities) {
+                        await Promise.all(activities.map((prevAct) => {
+                           const findTodo = values.activities.find((act: any) => act.id = prevAct.id)
+                           if (!findTodo) deleteActivity({ userId, id: prevAct.id })
+                        }))
+                     }
+                  }
+                  navigate(-1)
+               }
             }}
             initialValues={{
                ...note,
                date: moment(note.noteDateString, 'DD/MM/YYYY'),
-               todos: todos?.map(todo => todo.text),
-               activities: activities?.map(act => act)
+               todos: todos?.map(todo => todo),
+               activities: activities?.map(act => {
+                  const activityFormValues = {
+                     ...act,
+                     endSleep: moment(act.endSleep, 'HH:mm'),
+                     eatTime: moment(act.eatTime, "HH:mm"),
+                     startSleep: moment(act.startSleep, 'HH:mm'),
+                  }
+
+                  return activityFormValues
+               })
             }}
          >
-            <Form.Item name={"title"}>
+            <Form.Item name={"title"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                <Input placeholder="Введите заголовок" />
             </Form.Item>
-            <Form.Item name={"date"}>
+            <Form.Item name={"date"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                <DatePicker
                   placeholder="Введите дату поста"
                   onChange={() => { }}
                   format='DD/MM/YYYY'
                   style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name={"text"}>
+            <Form.Item name={"text"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                <Input.TextArea placeholder="Введите текст" />
             </Form.Item>
             <Title level={4} className='card-title'>Список дел:</Title>
@@ -87,6 +180,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
                         >
                            <Form.Item
                               {...field}
+                              name={[field.name, 'text']}
                               validateTrigger={['onChange', 'onBlur']}
                               rules={[
                                  {
@@ -143,7 +237,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
                               name={[field.name, 'endSleep']}
                            //rules={[{ required: true, message: 'Missing price' }]}
                            >
-                              <Input />
+                              <TimePicker format={'HH:mm'} placeholder='Введите время' showNow={false} style={{ width: "100%" }} />
                            </Form.Item>
                            <Form.Item
                               {...field}
@@ -151,7 +245,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
                               name={[field.name, 'eatTime']}
                            //rules={[{ required: true, message: 'Missing price' }]}
                            >
-                              <Input />
+                              <TimePicker format={'HH:mm'} placeholder='Введите время' showNow={false} style={{ width: "100%" }} />
                            </Form.Item>
                            <Form.Item
                               {...field}
@@ -159,7 +253,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
                               name={[field.name, 'eatAmount']}
                            //rules={[{ required: true, message: 'Missing price' }]}
                            >
-                              <Input />
+                              <InputNumber min={0} step={10} style={{ width: "100%" }} />
                            </Form.Item>
                            <Form.Item
                               {...field}
@@ -167,7 +261,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
                               name={[field.name, 'startSleep']}
                            //rules={[{ required: true, message: 'Missing price' }]}
                            >
-                              <Input />
+                              <TimePicker format={'HH:mm'} placeholder='Введите время' showNow={false} style={{ width: "100%" }} />
                            </Form.Item>
 
                            <DeleteOutlined style={{ fontSize: '1.2rem', margin: '0 0 1rem 0' }} onClick={() => remove(field.name)} />
