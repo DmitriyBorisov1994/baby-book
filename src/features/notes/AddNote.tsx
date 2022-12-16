@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Typography, Input, InputNumber, Row, Col, DatePicker, TimePicker, Form, Button, Divider } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useAddNoteMutation } from './notesApiSlice';
@@ -6,13 +6,25 @@ import { nanoid } from '@reduxjs/toolkit';
 import { useAddTodoMutation } from '../todos/todosApiSlice';
 import { useAddActivityMutation } from '../activities/activitiesApiSlice';
 import { useAppSelector } from '../../app/hooks';
+import PhotoUploader from '../photos/photoUploader';
+import { firebaseUploadPhoto } from '../photos/firebasePhotos';
+import { useNavigate } from 'react-router-dom';
 const { Title } = Typography
 
+
 const AddNote: React.FC = () => {
+
+   const navigate = useNavigate()
 
    const [addNote] = useAddNoteMutation()
    const [addTodo] = useAddTodoMutation()
    const [addActivity] = useAddActivityMutation()
+
+   const [photo, setPhoto] = useState<any>(null)
+
+   const onSetPhoto = (file: any) => {
+      setPhoto(file)
+   }
 
    const userId = useAppSelector((state) => state.auth.userId)
 
@@ -30,6 +42,9 @@ const AddNote: React.FC = () => {
             onFinish={async (values: any) => {
                if (userId) {
                   const noteId = `Note_${nanoid()}`
+                  if (photo) {
+                     firebaseUploadPhoto(photo, noteId)
+                  }
                   const newNote = {
                      title: values.title,
                      text: values.text,
@@ -60,6 +75,7 @@ const AddNote: React.FC = () => {
                         addActivity({ userId, newActivity })
                      }))
                   }
+                  navigate(-1)
                }
             }}
          >
@@ -82,6 +98,10 @@ const AddNote: React.FC = () => {
                   <Form.Item label="Текст:" name={"text"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                      <Input.TextArea placeholder="Введите текст" />
                   </Form.Item>
+               </Col>
+               <Col xs={24}>
+                  <Title level={4} className='card-title'>Фото:</Title>
+                  <PhotoUploader onSetPhoto={onSetPhoto} />
                </Col>
                <Col xs={24}>
                   <Title level={4} className='card-title'>Список дел:</Title>

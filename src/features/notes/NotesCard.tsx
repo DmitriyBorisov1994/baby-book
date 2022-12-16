@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Typography, Card, Collapse } from 'antd';
+import { Typography, Card, Collapse, Carousel } from 'antd';
 import './NotesCard.less'
 import TodoList from '../todos/TodoList';
 import ActivitiesTable from '../activities/ActivitiesTable';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { selectTodosByNoteId } from '../todos/todosApiSlice';
 import { selectActivitiesByNoteId, useDeleteActivityMutation } from '../activities/activitiesApiSlice';
+import { firebaseDeletePhotosFolderbyNoteId, firebaseDownloadUrls } from '../photos/firebasePhotos';
 
 const { Meta } = Card;
 const { Paragraph, Title } = Typography;
@@ -35,6 +36,12 @@ const NotesCard: React.FC<NoteCardProps> = (
 ) => {
 
    const navigate = useNavigate()
+
+   const [photoUrls, setPhotoUrls] = useState<string[]>([])
+
+   useEffect(() => {
+      firebaseDownloadUrls(note.noteId).then(urls => setPhotoUrls(urls))
+   }, [])
 
    const todos = useAppSelector((state) => selectTodosByNoteId(state, note.noteId))
    const activities = useAppSelector((state) => selectActivitiesByNoteId(state, note.noteId))
@@ -72,7 +79,24 @@ const NotesCard: React.FC<NoteCardProps> = (
       await deleteNote({ userId, noteId })
       if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
       if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
+      firebaseDeletePhotosFolderbyNoteId(noteId)
    }
+
+
+
+   console.log(photoUrls)
+
+   let cardCover
+
+   if (!photoUrls.length) {
+      cardCover = <></>
+   } else {
+      cardCover = <img
+         alt="card photo"
+         src={photoUrls[0]}
+      />
+   }
+
 
    return (
       <Card
@@ -81,12 +105,7 @@ const NotesCard: React.FC<NoteCardProps> = (
          style={{
             width: '100%',
          }}
-         cover={
-            <img
-               alt="example"
-               src="https://abrakadabra.fun/uploads/posts/2022-02/1643775019_1-abrakadabra-fun-p-multyashnie-mladentsi-4.jpg"
-            />
-         }
+         cover={cardCover}
          actions={[
             <div className='card-actionsWrapper'
                onClick={() => {

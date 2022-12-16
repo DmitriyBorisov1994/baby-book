@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Note, useDeleteNoteMutation, useUpdateNoteMutation } from './notesApiSlice';
 import { Typography, Card, Collapse, Form, Input, DatePicker, Button, TimePicker, InputNumber } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -8,6 +8,8 @@ import { Todo, useAddTodoMutation, useDeleteTodoMutation, useUpdateTodoMutation 
 import { nanoid } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
+import { firebaseDeletePhotosFolderbyNoteId, firebaseDownloadUrls, firebaseUploadPhoto } from '../photos/firebasePhotos';
+import PhotoUploader from '../photos/photoUploader';
 
 type EditNoteProps = {
    note: Note,
@@ -36,12 +38,37 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
 
    const userId = useAppSelector((state) => state.auth.userId)
 
+   const [photo, setPhoto] = useState<any>(null)
+
+   const onSetPhoto = (file: any) => {
+      setPhoto(file)
+   }
+
    const onDeleteNoteClick = async (userId: string, noteId: string) => {
       await deleteNote({ userId, noteId })
       if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
       if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
+      firebaseDeletePhotosFolderbyNoteId(noteId)
       navigate(-1)
    }
+
+   const [photoUrls, setPhotoUrls] = useState<string[]>([])
+
+   useEffect(() => {
+      firebaseDownloadUrls(note.noteId).then(urls => setPhotoUrls(urls))
+   }, [])
+
+   /*let cardCover
+
+   if (!photoUrls.length) {
+      cardCover = <></>
+   } else {
+      cardCover = <img
+         alt="card photo"
+         src={photoUrls[0]}
+      />
+   }*/
+
 
    return (
       <Card
@@ -50,12 +77,7 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
          style={{
             width: '100%',
          }}
-         cover={
-            <img
-               alt="example"
-               src="https://abrakadabra.fun/uploads/posts/2022-02/1643775019_1-abrakadabra-fun-p-multyashnie-mladentsi-4.jpg"
-            />
-         }
+         //cover={/*cardCover*/}
          actions={[
             <div className='card-actionsWrapper'
                onClick={() => {
@@ -77,7 +99,10 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
             onFinish={async (values: any) => {
                console.log('Success:', values);
                console.log(values.date.format('DD/MM/YYYY'))
-
+               if (photo) {
+                  firebaseDeletePhotosFolderbyNoteId(note.noteId)
+                  firebaseUploadPhoto(photo, note.noteId)
+               }
                if (userId) {
                   const noteId = note.noteId
                   const updatedNote = {
@@ -168,6 +193,8 @@ const EditNote: React.FC<EditNoteProps> = ({ note, todos, activities }) => {
             <Form.Item name={"text"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                <Input.TextArea placeholder="Введите текст" />
             </Form.Item>
+            <Title level={4} className='card-title'>Фото:</Title>
+            <PhotoUploader onSetPhoto={onSetPhoto} url={photoUrls[0]} />
             <Title level={4} className='card-title'>Список дел:</Title>
             <Form.List name="todos">
                {(fields, { add, remove }, { errors }) => (
