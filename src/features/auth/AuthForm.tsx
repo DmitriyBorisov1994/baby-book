@@ -29,6 +29,10 @@ const AuthForm: React.FC = () => {
             />
          </div>
          <Divider />
+         <h1>Тестовые логин и пароль</h1>
+         <p>Логин: test@gmail.com</p>
+         <p>Пароль: 12345678Test!</p>
+         <Divider />
          <Form
             layout="vertical"
             onFinish={async (values: AuthQueryArg) => {
