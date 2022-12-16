@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/baby-book/static/css/main.5b9bd3c2.css",
+    "main.js": "/baby-book/static/js/main.aa41e9e3.js",
+    "static/js/787.f8d9c2d4.chunk.js": "/baby-book/static/js/787.f8d9c2d4.chunk.js",
+    "static/media/baby.png": "/baby-book/static/media/baby.3b13df48a1c8fe0fc34d.png",
+    "index.html": "/baby-book/index.html",
+    "main.5b9bd3c2.css.map": "/baby-book/static/css/main.5b9bd3c2.css.map",
+    "main.aa41e9e3.js.map": "/baby-book/static/js/main.aa41e9e3.js.map",
+    "787.f8d9c2d4.chunk.js.map": "/baby-book/static/js/787.f8d9c2d4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5b9bd3c2.css",
+    "static/js/main.aa41e9e3.js"
+  ]
+}
