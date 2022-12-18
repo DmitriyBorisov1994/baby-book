@@ -2,6 +2,7 @@
   "name": "baby-book",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://dmitriyborisov1994.github.io/baby-book/",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@reduxjs/toolkit": "^1.8.5",
@@ -16,6 +17,7 @@
     "craco": "^0.0.3",
     "craco-less": "^2.0.0",
     "firebase": "^9.9.4",
+    "gh-pages": "^4.0.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,7 +32,9 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build"
   },
   "eslintConfig": {
     "extends": [

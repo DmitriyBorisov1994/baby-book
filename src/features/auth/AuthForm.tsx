@@ -45,7 +45,7 @@ const AuthForm: React.FC = () => {
                console.log(userData)
                const { userEmail, userId, userToken } = userData.data
                dispatch(setCredentials({ userEmail, userId, userToken }))
-               navigate('/home')
+               navigate('/notes')
             }}
          >
             <Form.Item

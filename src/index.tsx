@@ -5,7 +5,7 @@ import { persistor, store } from './app/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter as BrowserRouter } from 'react-router-dom';
 import './firebase'
 import { PersistGate } from 'redux-persist/integration/react';
 
