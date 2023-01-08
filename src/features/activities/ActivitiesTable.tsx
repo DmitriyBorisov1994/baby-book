@@ -1,14 +1,18 @@
-import { Table } from 'antd'
+import { Table, Typography } from 'antd'
 import React from 'react'
-import { Activity } from './activitiesApiSlice'
+import { Activity, selectActivitiesByNoteId } from './activitiesApiSlice'
+import { useAppSelector } from '../../app/hooks'
 
 
 type ActivitiesTableProps = {
-   activities: Activity[],
+   noteId: string,
 }
 
-const ActivitiesTable: React.FC<ActivitiesTableProps> = ({ activities }) => {
-   console.log(activities)
+const { Paragraph, Text } = Typography
+
+const ActivitiesTable: React.FC<ActivitiesTableProps> = ({ noteId }) => {
+
+   const activities = useAppSelector((state) => selectActivitiesByNoteId(state, noteId)) as Activity[]
 
    const columns = [
       {
@@ -35,10 +39,10 @@ const ActivitiesTable: React.FC<ActivitiesTableProps> = ({ activities }) => {
 
    const dataSource = activities
 
+   if (!activities?.length) return <Paragraph><Text type='secondary'>Вы не отмечали активность </Text></Paragraph>
+
    return (
-      <div>
-         <Table scroll={{ x: true }} pagination={false} dataSource={dataSource} columns={columns} />
-      </div>
+      <Table scroll={{ x: true }} pagination={false} dataSource={dataSource} columns={columns} />
    )
 }
 

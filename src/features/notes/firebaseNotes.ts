@@ -5,7 +5,6 @@ import { set, ref, remove, update, get } from "firebase/database";
 export const firebaseGetNotes = async (userId: string) => {
    const data = await get(ref(db, `/notes/${userId}`))
       .then((snapshot) => Object.values(snapshot.val()))
-   console.log(data[0] as any)
    return {
       notes: Object.values(data[0] as any),
       notesIds: Object.keys(data[0] as any)

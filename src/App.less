@@ -1,3 +1,119 @@
 @import '~antd/dist/antd.less';
 @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
+
+.custom-box-shadow {
+   box-shadow: 0 0px 2px rgba(0, 0, 0, 0.16), 0 0px 6px 0 rgba(0, 0, 0, 0.12), 0 0px 12px 0 rgba(0, 0, 0, 0.09);
+   transition: box-shadow 0.3s;
+
+   &:hover {
+      box-shadow: 0px 0px 5px 3px @border-color-split;
+   }
+}
+
+.mh100 {
+   min-height: calc(100vh - 64px);
+}
+
+.formWrapperPadding {
+   padding: 16px 0px
+}
+
+.appWrapper {
+   min-height: 100vh;
+   background-color: @background-color-light;
+}
+
+.appContent {
+   padding: 0px;
+   height: 100%;
+}
+
+.header-title {
+   color: white;
+   font-family: 'Caveat', cursive;
+   font-size: 1.5rem;
+
+   @media (min-width: 576px) {
+      font-size: 2rem;
+   }
+
+   @media (min-width: 768px) {
+      font-size: 2.5rem;
+   }
+}
+
+.notesCardWrapper {
+   padding: 8px 0px 8px 0px;
+
+   @media (min-width: 576px) {
+      padding: 16px 0px 16px 0px;
+   }
+
+   @media (min-width: 768px) {
+      &:nth-child(even) {
+         padding: 12px 12px 12px 24px;
+      }
+
+      &:nth-child(odd) {
+         padding: 12px 24px 12px 12px;
+      }
+   }
+}
+
+.card-meta {
+   padding: 24px;
+}
+
+.card-grid {
+   width: 100%;
+}
+
+.card-grid-nopadding {
+   padding: 1px;
+}
+
+.card-actionsWrapper {
+   display: flex;
+   flex-direction: column;
+}
+
+.list-content-wrapper {
+   width: 100%;
+   border-radius: @border-radius-base;
+   display: flex;
+   justify-content: space-between;
+}
+
+.list-item {
+   &:hover {
+      background-color: #f8bbd07b;
+      cursor: pointer;
+   }
+}
+
+.public_wrapper {
+   font-size: 1.5rem;
+}
+
+.public_rows {
+   font-size: 1.5rem;
+
+   &:hover {
+      background-color: @background-color-light;
+   }
+}
+
+.public_cols {
+   padding: 24px;
+}
+
+.public_link {
+   border-radius: @border-radius-base;
+   transform: scale(1);
+   transition: transform 300ms ease-in-out;
+
+   &:hover {
+      transform: scale(1.08);
+   }
+}

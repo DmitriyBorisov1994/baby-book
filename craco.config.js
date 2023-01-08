@@ -18,7 +18,8 @@ module.exports = {
               '@heading-color': '#212121',
               '@border-color-split': '#BDBDBD',
               '@background-color-light': '#f8bbd07b',
-              '@border-radius-base': '2px'
+              '@border-radius-base': '0px',
+              '@layout-header-padding': '0 24px'
             },
             javascriptEnabled: true,
           },

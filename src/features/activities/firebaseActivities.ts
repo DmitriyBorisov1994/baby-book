@@ -6,7 +6,6 @@ import { Activity } from './activitiesApiSlice';
 export const firebaseGetActivities = async (userId: string) => {
    const data = await get(ref(db, `/activities/${userId}`))
       .then((snapshot) => Object.values(snapshot.val()))
-   console.log(data[0] as any)
    return {
       activities: Object.values(data[0] as any),
       activitiesIds: Object.keys(data[0] as any)

@@ -1,66 +1,35 @@
-import { Col, Row } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import React from 'react'
-import { useAppSelector } from '../../app/hooks'
-import { useGetActivitiesQuery } from '../activities/activitiesApiSlice'
-import { useGetTodosQuery } from '../todos/todosApiSlice'
-import { selectNoteBySearch, useGetNotesQuery } from './notesApiSlice'
 import NotesCard from './NotesCard'
-import './NotesList.less'
+import { useAppSelector } from '../../app/hooks'
+import { selectNoteBySearch } from './notesApiSlice'
 
 type NoteListProps = {
    searchByDate: string,
    searchByTitle: string
 }
 
+const { Paragraph, Text } = Typography
+
 const NotesList: React.FC<NoteListProps> = ({ searchByDate, searchByTitle }) => {
-
-   const { isLoading,
-      isSuccess,
-      isError,
-      error } = useGetNotesQuery('')
-
-   const { isLoading: isTodosLoading,
-      isSuccess: isTodosSuccess,
-      isError: isTodosError,
-      error: todosError } = useGetTodosQuery('')
-
-   const { isLoading: isActivitiesLoading,
-      isSuccess: isActivitiesSuccess,
-      isError: isActivitiesError,
-      error: ActivitiesError } = useGetActivitiesQuery('')
 
    const notes = useAppSelector((state) => selectNoteBySearch(state, searchByTitle, searchByDate))
 
-   let content
-
-   if (isSuccess) {
-      content = notes?.map(note =>
-         <Col xs={24} lg={12}>
-            <div className='notescard-wrapper'>
-               <NotesCard
-                  note={note}
-                  isTodosLoading={isTodosLoading}
-                  isTodosSuccess={isTodosSuccess}
-                  isTodosError={isTodosError}
-                  isActivitiesLoading={isActivitiesLoading}
-                  isActivitiesSuccess={isActivitiesSuccess}
-                  isActivitiesError={isActivitiesError}
-               />
-            </div>
-         </Col>)
-   } else if (isError) {
-      content = <Col xs={24} lg={12}><p>Ошибка</p></Col>
-   } else if (isLoading) {
-      content = <Col xs={24} lg={12}><p>Загружаю...</p></Col>
-   }
+   if (notes?.length) return (
+      <>
+         {
+            notes?.map(note =>
+               <Col xs={24} md={12} key={note.noteId} className='notesCardWrapper'>
+                  <NotesCard note={note} />
+               </Col>)
+         }
+      </>
+   )
 
    return (
-      <article className='notelists'>
-         <Row align='top' gutter={[24, 24]}>
-            {content}
-         </Row>
-      </article>
-
+      <Row align='top' gutter={[24, 24]} justify='center'>
+         <Col><Paragraph><Text type='secondary'>Вы пока не создали ни одной заметки</Text></Paragraph></Col>
+      </Row>
    )
 }
 

@@ -22,7 +22,6 @@ export const activitiesApiSlice = apiSlice.injectEndpoints({
    endpoints: (build) => ({
       getActivities: build.query({
          queryFn: async (userId: string) => {
-            console.log('start loading...')
             const { activities, activitiesIds } = await firebaseGetActivities(userId)
             return {
                data: {

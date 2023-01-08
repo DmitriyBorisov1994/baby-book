@@ -5,7 +5,6 @@ import { set, ref, remove, update, get } from "firebase/database";
 export const firebaseGetTodos = async (userId: string) => {
    const data = await get(ref(db, `/todos/${userId}`))
       .then((snapshot) => Object.values(snapshot.val()))
-   console.log(data[0] as any)
    return {
       todos: Object.values(data[0] as any),
       todosIds: Object.keys(data[0] as any)

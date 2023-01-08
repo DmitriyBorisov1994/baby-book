@@ -1,6 +1,5 @@
-import { Form, Input, Button, Divider, Segmented } from 'antd'
+import { Form, Input, Button, Divider, Segmented, Card, Row } from 'antd'
 import React, { useState } from 'react'
-import './AuthForm.less'
 import { SegmentedValue } from 'antd/lib/segmented';
 import { AuthQueryArg, useSignInMutation, useSignUpMutation } from './authApiSlice';
 import { useAppDispatch } from '../../app/hooks';
@@ -11,27 +10,27 @@ const AuthForm: React.FC = () => {
 
    const [form, setForm] = useState<SegmentedValue>('signIn')
 
-   const [signIn, { isLoading: isSignInLoading }] = useSignInMutation()
-   const [signUp, { isLoading: isSignUpLoading }] = useSignUpMutation()
+   const [signIn, { isLoading: isSignInLoading, isError: isSignInError }] = useSignInMutation()
+   const [signUp, { isLoading: isSignUpLoading, isError: isSignUpError }] = useSignUpMutation()
 
    const dispatch = useAppDispatch()
 
    const navigate = useNavigate()
 
    return (
-      <div className='form-wrapper'>
-         <div className='form-select'>
+      <Card className='custom-box-shadow'>
+         <Row justify='center'>
             <Segmented
                size='large'
                options={[{ label: 'Войти', value: 'signIn' }, { label: 'Зарегистрироваться', value: 'signUp' }]}
                value={form}
                onChange={(value: SegmentedValue) => setForm(value)}
             />
-         </div>
+         </Row>
          <Divider />
          <h1>Тестовые логин и пароль</h1>
-         <p>Логин: test@gmail.com</p>
-         <p>Пароль: 12345678Test!</p>
+         <div>Логин: test@gmail.com</div>
+         <div>Пароль: 12345678Test!</div>
          <Divider />
          <Form
             layout="vertical"
@@ -81,7 +80,7 @@ const AuthForm: React.FC = () => {
             >
                <Input.Password placeholder="Введите пароль" />
             </Form.Item>
-            {form === 'signIn' &&
+            {form === 'signUp' &&
                <Form.Item
                   label="Подтвердите пароль"
                   name="confirmPassword"
@@ -108,13 +107,13 @@ const AuthForm: React.FC = () => {
                <Button
                   type='primary'
                   htmlType="submit"
+                  loading={form === 'signIn' ? isSignInLoading : isSignUpLoading}
                >
                   {form === 'signIn' ? 'Войти' : 'Зарегистрироваться'}
                </Button>
             </Form.Item>
          </Form >
-
-      </div>
+      </Card>
    )
 }
 

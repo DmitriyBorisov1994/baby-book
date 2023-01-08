@@ -1,14 +1,11 @@
 import React from 'react'
-import { Layout, Menu, Typography } from 'antd';
+import { Layout, Menu, Row, Col, Image } from 'antd';
 import { HomeOutlined, ContainerOutlined, IdcardOutlined, LogoutOutlined } from '@ant-design/icons';
-import './AppHeader.less'
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { logOut, selectCurrentToken } from '../features/auth/authSlice';
 
 const { Header } = Layout;
-//const { Title } = Typography;
-
 
 const AppHeader: React.FC = () => {
 
@@ -19,30 +16,40 @@ const AppHeader: React.FC = () => {
 
    return (
       <Header className='header'>
-         <div className="header-logo">
-            <img className="header-pic" src={require('./../images/baby.png')} />
-            <h1 className='header-title'>Baby Book</h1>
-         </div>
-         <Menu
-            theme="dark"
-            mode="horizontal"
-         >
-            <Menu.Item key="home" icon={<HomeOutlined />} disabled={!userToken}>
-               <Link to={'/'}>Домашняя</Link>
-            </Menu.Item>
-            <Menu.Item key="notes" icon={<ContainerOutlined />} disabled={!userToken}>
-               <Link to={'/notes'}>Заметки</Link>
-            </Menu.Item>
-            <Menu.Item key="posts" icon={<IdcardOutlined />} disabled={!userToken}>
-               <Link to={'/add'}>Добавить новую заметку</Link>
-            </Menu.Item>
-            {!!userToken && <Menu.Item key="logout" icon={<LogoutOutlined />}>
-               <span onClick={() => {
-                  dispatch(logOut())
-                  navigate('/')
-               }}>Выйти</span>
-            </Menu.Item>}
-         </Menu>
+         <Row justify='space-between'>
+            <Col xs={12}>
+               <Row wrap={false}>
+                  <Col><Image preview={false} height={64} src={require('./../images/baby.png')} /></Col>
+                  <Col><h1 className='header-title'>Baby Book</h1></Col>
+               </Row>
+            </Col>
+            <Col xs={12}>
+               <Row justify='end'>
+                  <Col>
+                     <Menu
+                        theme="dark"
+                        mode="horizontal"
+                     >
+                        <Menu.Item key="home" icon={<HomeOutlined />} disabled={!userToken}>
+                           <Link to={'/'}>Домашняя</Link>
+                        </Menu.Item>
+                        <Menu.Item key="notes" icon={<ContainerOutlined />} disabled={!userToken}>
+                           <Link to={'/notes'}>Заметки</Link>
+                        </Menu.Item>
+                        <Menu.Item key="posts" icon={<IdcardOutlined />} disabled={!userToken}>
+                           <Link to={'/add'}>Добавить новую заметку</Link>
+                        </Menu.Item>
+                        {!!userToken && <Menu.Item key="logout" icon={<LogoutOutlined />}>
+                           <span onClick={() => {
+                              dispatch(logOut())
+                              navigate('/')
+                           }}>Выйти</span>
+                        </Menu.Item>}
+                     </Menu>
+                  </Col>
+               </Row>
+            </Col>
+         </Row>
       </Header>
    )
 }

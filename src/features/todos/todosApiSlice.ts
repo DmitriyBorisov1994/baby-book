@@ -19,7 +19,6 @@ export const notesApiSlice = apiSlice.injectEndpoints({
    endpoints: (build) => ({
       getTodos: build.query({
          queryFn: async (userId: string) => {
-            console.log('start loading...')
             const { todos, todosIds } = await firebaseGetTodos(userId)
             return {
                data: {

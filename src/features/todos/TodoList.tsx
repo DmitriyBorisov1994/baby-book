@@ -2,41 +2,44 @@ import { List, Typography, Checkbox } from 'antd'
 import React from 'react'
 import { useAppSelector } from '../../app/hooks'
 import './TodoList.less'
-import { Todo, useUpdateTodoMutation } from './todosApiSlice'
+import { Todo, selectTodosByNoteId, useUpdateTodoMutation } from './todosApiSlice'
 
-const { Text } = Typography
+const { Text, Paragraph } = Typography
 
 type TodoListProps = {
-   todos: Todo[]
+   noteId: string
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos }) => {
+const TodoList = ({ noteId }: TodoListProps) => {
+
+   console.log('render todolist')
 
    const [updateTodo] = useUpdateTodoMutation()
    const userId = useAppSelector((state) => state.auth.userId)
+   const todos = useAppSelector((state) => selectTodosByNoteId(state, noteId))
+
+   if (!todos?.length) return <Paragraph><Text type='secondary'>У вас не запланировано никаких дел</Text></Paragraph>
 
    return (
-      <div>
-         <List size="large">
-            {todos.map(todo => (
-               <List.Item key={todo.todoId} className='list-item'>
-                  <div className='list-content-wrapper'>
-                     <Text type={todo.completed ? "success" : "danger"} delete={todo.completed ? true : false}>{todo.text}</Text>
-                     <Checkbox
-                        onChange={() => {
-                           const updatedTodo = {
-                              ...todo,
-                              completed: !todo.completed
-                           }
-                           updateTodo({ userId, updatedTodo })
-                        }}
-                        checked={todo.completed}
-                     />
-                  </div>
-               </List.Item>
-            ))}
-         </List>
-      </div>
+      <List size="large">
+         {todos?.map(todo => (
+            <List.Item key={todo.todoId} className='list-item'>
+               <div className='list-content-wrapper'>
+                  <Text type={todo.completed ? "success" : "danger"} delete={todo.completed ? true : false}>{todo.text}</Text>
+                  <Checkbox
+                     onChange={() => {
+                        const updatedTodo = {
+                           ...todo,
+                           completed: !todo.completed
+                        }
+                        updateTodo({ userId, updatedTodo })
+                     }}
+                     checked={todo.completed}
+                  />
+               </div>
+            </List.Item>
+         ))}
+      </List>
    )
 }
 

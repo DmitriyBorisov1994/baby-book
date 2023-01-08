@@ -4,11 +4,14 @@ import './App.less';
 import AppPublic from './components/AppPublic';
 import Layout from './components/Layout';
 import RequireAuth from './components/RequireAuth';
-import AddNote from './features/notes/AddNote';
 import AuthPage from './pages/AuthPage';
-import EditNotePage from './pages/EditNotePage';
 import NotesPage from './pages/NotesPage';
 
+import AddNotePage from './pages/AddNotePage';
+import EditNotePage from './pages/EditNotePage';
+
+const LazyEditNotePage = React.lazy(() => import('./pages/EditNotePage'))
+const LazyAddNote = React.lazy(() => import('./pages/AddNotePage'))
 
 function App() {
   return (
@@ -18,10 +21,9 @@ function App() {
         <Route path="auth" element={<AuthPage />} />
         <Route element={<RequireAuth />}>
           <Route path='notes' element={<NotesPage />} />
-          <Route path='edit/:noteId' element={<EditNotePage />} />
-          <Route path='add' element={<AddNote />} />
+          <Route path='edit/:noteId' element={<LazyEditNotePage />} />
+          <Route path='add' element={<LazyAddNote />} />
         </Route>
-
       </Route>
     </Routes>
   );

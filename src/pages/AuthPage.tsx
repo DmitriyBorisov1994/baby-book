@@ -4,7 +4,7 @@ import AuthForm from '../features/auth/AuthForm'
 
 const AuthPage = () => {
    return (
-      <Row justify='center'>
+      <Row justify='center' align='middle' className='mh100'>
          <Col xs={24} md={12}><AuthForm /></Col>
       </Row>
    )
