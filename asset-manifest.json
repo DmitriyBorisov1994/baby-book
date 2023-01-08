@@ -1,17 +1,31 @@
 {
   "files": {
-    "main.css": "/baby-book/static/css/main.fae9c0d2.css",
-    "main.js": "/baby-book/static/js/main.f517b8f3.js",
-    "static/js/787.f8d9c2d4.chunk.js": "/baby-book/static/js/787.f8d9c2d4.chunk.js",
+    "main.css": "/baby-book/static/css/main.b8b9823b.css",
+    "main.js": "/baby-book/static/js/main.89f085e3.js",
+    "static/js/546.60a491f0.chunk.js": "/baby-book/static/js/546.60a491f0.chunk.js",
+    "static/js/589.634e625d.chunk.js": "/baby-book/static/js/589.634e625d.chunk.js",
+    "static/js/917.45f778c6.chunk.js": "/baby-book/static/js/917.45f778c6.chunk.js",
+    "static/js/744.19f03f01.chunk.js": "/baby-book/static/js/744.19f03f01.chunk.js",
+    "static/js/944.190c2d89.chunk.js": "/baby-book/static/js/944.190c2d89.chunk.js",
+    "static/js/575.4aa8e4ea.chunk.js": "/baby-book/static/js/575.4aa8e4ea.chunk.js",
+    "static/js/40.15e82f72.chunk.js": "/baby-book/static/js/40.15e82f72.chunk.js",
     "static/media/family.png": "/baby-book/static/media/family.bcf41d7aa20090adefa2.png",
     "static/media/baby.png": "/baby-book/static/media/baby.3b13df48a1c8fe0fc34d.png",
+    "static/media/addNote.png": "/baby-book/static/media/addNote.5514140b11c4a8583696.png",
+    "static/media/notes.png": "/baby-book/static/media/notes.9d4bdf962981b0604e36.png",
     "index.html": "/baby-book/index.html",
-    "main.fae9c0d2.css.map": "/baby-book/static/css/main.fae9c0d2.css.map",
-    "main.f517b8f3.js.map": "/baby-book/static/js/main.f517b8f3.js.map",
-    "787.f8d9c2d4.chunk.js.map": "/baby-book/static/js/787.f8d9c2d4.chunk.js.map"
+    "main.b8b9823b.css.map": "/baby-book/static/css/main.b8b9823b.css.map",
+    "main.89f085e3.js.map": "/baby-book/static/js/main.89f085e3.js.map",
+    "546.60a491f0.chunk.js.map": "/baby-book/static/js/546.60a491f0.chunk.js.map",
+    "589.634e625d.chunk.js.map": "/baby-book/static/js/589.634e625d.chunk.js.map",
+    "917.45f778c6.chunk.js.map": "/baby-book/static/js/917.45f778c6.chunk.js.map",
+    "744.19f03f01.chunk.js.map": "/baby-book/static/js/744.19f03f01.chunk.js.map",
+    "944.190c2d89.chunk.js.map": "/baby-book/static/js/944.190c2d89.chunk.js.map",
+    "575.4aa8e4ea.chunk.js.map": "/baby-book/static/js/575.4aa8e4ea.chunk.js.map",
+    "40.15e82f72.chunk.js.map": "/baby-book/static/js/40.15e82f72.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fae9c0d2.css",
-    "static/js/main.f517b8f3.js"
+    "static/css/main.b8b9823b.css",
+    "static/js/main.89f085e3.js"
   ]
 }
