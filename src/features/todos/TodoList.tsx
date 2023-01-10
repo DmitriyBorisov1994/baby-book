@@ -1,8 +1,6 @@
 import { List, Typography, Checkbox } from 'antd'
-import React from 'react'
 import { useAppSelector } from '../../app/hooks'
-import './TodoList.less'
-import { Todo, selectTodosByNoteId, useUpdateTodoMutation } from './todosApiSlice'
+import { selectTodosByNoteId, useUpdateTodoMutation } from './todosApiSlice'
 
 const { Text, Paragraph } = Typography
 
@@ -11,8 +9,6 @@ type TodoListProps = {
 }
 
 const TodoList = ({ noteId }: TodoListProps) => {
-
-   console.log('render todolist')
 
    const [updateTodo] = useUpdateTodoMutation()
    const userId = useAppSelector((state) => state.auth.userId)

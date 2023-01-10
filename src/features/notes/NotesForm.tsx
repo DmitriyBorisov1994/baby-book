@@ -1,26 +1,37 @@
-import { Card, Form, Button, Input, DatePicker, Typography, TimePicker, InputNumber } from 'antd';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import React from 'react'
+import { Card, Form, Button, Input, DatePicker, Typography, TimePicker, InputNumber, Upload, message, Image } from 'antd';
+import { DeleteOutlined, PlusOutlined, LoadingOutlined, EditOutlined } from '@ant-design/icons';
+import React, { useState, useMemo } from 'react'
 
 import { Note } from './notesApiSlice';
 import { Todo } from './../todos/todosApiSlice'
 import { Activity } from './../activities/activitiesApiSlice'
 
-import moment from 'moment';
+import type { UploadChangeParam } from 'antd/es/upload';
+import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 
-const { Title } = Typography
+import moment from 'moment';
+import { firebaseUploadPhoto } from '../photos/firebasePhotos';
+
+
+
+const { Title, Text } = Typography
+const { Dragger } = Upload;
 
 type NotesFormProps = {
-   onFinish: (values: any) => void
+   onFinish: (values: any) => void,
+   onDeleteNoteClick?: (noteId: string) => Promise<void>,
+   onBackClick?: (prevUrl: string | undefined, currentUrl: string | undefined, path: string | undefined) => Promise<void>,
    note?: Note,
    todos?: Todo[],
    activities?: Activity[],
-   cardActions?: React.ReactNode[],
-   cardTitle: string,
-   submitBtnText: string
+   formAction: string,
 }
 
-const NotesForm = ({ onFinish, note, todos, activities, cardActions, cardTitle, submitBtnText }: NotesFormProps) => {
+const NotesForm = ({ onFinish, note, todos, activities, formAction, onDeleteNoteClick, onBackClick }: NotesFormProps) => {
+
+   const [imageUrl, setimageUrl] = useState<string | undefined>(note?.imageUrl)
+   const [loading, setLoading] = useState<boolean>(false);
+
    const createInitialValues = () => {
       if (note) {
          return {
@@ -41,6 +52,66 @@ const NotesForm = ({ onFinish, note, todos, activities, cardActions, cardTitle, 
       } else return undefined
    }
 
+   const beforeUpload = (file: RcFile) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+         message.error('Вы можете загружать только изображения формата JPG/PNG!');
+      }
+      const isLt6M = file.size / 1024 / 1024 < 6;
+      if (!isLt6M) {
+         message.error('Размер картинки превышает 6MB!');
+      }
+      return isJpgOrPng && isLt6M;
+   };
+
+   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
+
+      if (info.file.status === 'uploading') {
+         setLoading(true);
+         return;
+      }
+      if (info.file.status === 'done') {
+         setLoading(false)
+      }
+   };
+
+   const normFile = (e: any) => {
+      return e?.file.response;
+   };
+
+   const uploadButton = (
+      <div>
+         {loading ? <LoadingOutlined /> : <PlusOutlined />}
+         <div style={{ marginTop: 8 }}>Загрузить</div>
+      </div>
+   );
+
+   const cardActions = useMemo((): React.ReactNode[] | undefined =>
+      formAction === 'edit'
+         ?
+         [<div className='card-actionsWrapper'
+            onClick={() => {
+               if (note && onDeleteNoteClick) {
+                  onDeleteNoteClick(note.noteId)
+               }
+            }}
+         >
+            <DeleteOutlined key="delete" />
+            <Text>Удалить</Text>
+         </div>,
+         <div className='card-actionsWrapper'
+            onClick={() => {
+               if (note && onBackClick) onBackClick(note.imageUrl, imageUrl, note?.imagePath)
+            }}
+         >
+            <EditOutlined key="edit" />
+            <Text>Назад</Text>
+         </div>,
+         ]
+         :
+         undefined,
+      [formAction])
+
    return (
       <Card
          hoverable={true}
@@ -49,7 +120,7 @@ const NotesForm = ({ onFinish, note, todos, activities, cardActions, cardTitle, 
             width: '100%',
          }}
          actions={cardActions}
-         title={cardTitle}
+         title={formAction === 'edit' ? 'Отредактируйте заметку' : 'Добавить заметку'}
       >
          <Form
             onFinish={onFinish}
@@ -68,8 +139,23 @@ const NotesForm = ({ onFinish, note, todos, activities, cardActions, cardTitle, 
             <Form.Item name={"text"} rules={[{ required: true, message: 'Обязательное поле!' }]}>
                <Input.TextArea placeholder="Введите текст" />
             </Form.Item>
-            {/*<Title level={4} className='card-title'>Фото:</Title>
-            <PhotoUploader onSetPhoto={onSetPhoto} url={photoUrls[0]} />*/}
+            <Form.Item name='dragger' valuePropName='file' getValueFromEvent={normFile}>
+               <Dragger
+                  multiple={false}
+                  showUploadList={false}
+                  beforeUpload={beforeUpload}
+                  onChange={handleChange}
+                  customRequest={async ({ onError, onSuccess, file, filename }) => {
+                     const fileToUpload = file as RcFile
+                     const url = await firebaseUploadPhoto(fileToUpload, `${fileToUpload.uid}`)
+                     if (onSuccess && url) onSuccess({ url, filePath: fileToUpload.uid })
+                     setimageUrl(url)
+                  }}
+               >
+                  {imageUrl ? <Image preview={false} src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+               </Dragger>
+            </Form.Item>
+
             <Title level={4} className='card-title'>Список дел:</Title>
             <Form.List name="todos">
                {(fields, { add, remove }, { errors }) => (
@@ -176,7 +262,7 @@ const NotesForm = ({ onFinish, note, todos, activities, cardActions, cardTitle, 
             </Form.List>
             <Form.Item>
                <Button type="primary" htmlType="submit">
-                  {submitBtnText}
+                  {formAction === 'edit' ? 'Сохранить изменения' : 'Добавить'}
                </Button>
             </Form.Item>
          </Form >

@@ -22,14 +22,13 @@ const AddNotePage = () => {
    const onFinish = useCallback(async (values: any) => {
       if (userId) {
          const noteId = `Note_${nanoid()}`
-         /*if (photo) {
-            firebaseUploadPhoto(photo, noteId)
-         }*/
          const newNote = {
             title: values.title,
             text: values.text,
             noteDateString: values.date.format('DD/MM/YYYY'),
-            noteId
+            noteId,
+            imageUrl: values.dragger.url,
+            imagePath: values.dragger.filePath
          }
          await addNote({ userId, newNote })
          if (values.todos) {
@@ -61,7 +60,7 @@ const AddNotePage = () => {
 
    return (
       <Row justify='center' align='middle' className='mh100 formWrapperPadding'>
-         <Col xs={24} md={12}><NotesForm onFinish={onFinish} cardTitle={'Добавить новую заметку'} submitBtnText='Добавить' /></Col>
+         <Col xs={24} md={12}><NotesForm onFinish={onFinish} formAction='add' /></Col>
       </Row>
    )
 }

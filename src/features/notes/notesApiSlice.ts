@@ -7,7 +7,9 @@ export type Note = {
    title: string,
    text: string,
    noteDateString: string,
-   noteId: string
+   noteId: string,
+   imageUrl?: string,
+   imagePath?: string
 }
 
 export type NotesState = {

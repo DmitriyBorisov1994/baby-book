@@ -8,23 +8,16 @@ import {
 } from "firebase/storage";
 import { storage } from "./../../firebase";
 
-export const firebaseUploadPhoto = async (imageUpload: any, noteId: string) => {
-   const imageRef = ref(storage, `images/${noteId}/${imageUpload.uid}`);
-   uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-         console.log('Загружено! ' + url)
-      });
-   });
+export const firebaseUploadPhoto = async (file: any, url: string) => {
+   const imageRef = ref(storage, url);
+   return await uploadBytes(imageRef, file).then((snapshot) => {
+      const downloadUrl = getDownloadURL(snapshot.ref).then((url) => url);
+      return downloadUrl
+   })
 }
 
-export const firebaseDownloadUrls = async (noteId: string) => {
-   const response = await listAll(ref(storage, `images/${noteId}`))
-   const urls = await Promise.all(response.items.map((item) => getDownloadURL(item)))
-   return urls
-}
-
-export const firebaseDeletePhotosFolderbyNoteId = (noteId: string) => {
-   deleteObject(ref(storage, `images/${noteId}`)).then(() => {
+export const firebaseDeletePhoto = async (path: string) => {
+   deleteObject(ref(storage, `images/${path}`)).then(() => {
       console.log("// File deleted successfully")
    }).catch((error) => {
       console.log("// Uh-oh, an error occurred!")

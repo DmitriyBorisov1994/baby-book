@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAppSelector } from '../app/hooks'
-import { selectNoteById, useDeleteNoteMutation, useUpdateNoteMutation } from '../features/notes/notesApiSlice'
+import { Note, selectNoteById, useDeleteNoteMutation, useUpdateNoteMutation } from '../features/notes/notesApiSlice'
 import { Col, Row, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { selectActivitiesByNoteId, useAddActivityMutation, useDeleteActivityMutation, useUpdateActivityMutation } from '../features/activities/activitiesApiSlice';
@@ -9,6 +9,7 @@ import { selectTodosByNoteId, useAddTodoMutation, useDeleteTodoMutation, useUpda
 import { useNavigate } from 'react-router-dom';
 import { nanoid } from '@reduxjs/toolkit';
 import NotesForm from '../features/notes/NotesForm';
+import { firebaseDeletePhoto } from '../features/photos/firebasePhotos';
 
 const { Paragraph, Text } = Typography
 
@@ -43,30 +44,17 @@ const EditNotePage: React.FC = () => {
 
    const userId = useAppSelector((state) => state.auth.userId)
 
-   const onDeleteNoteClick = useCallback(async (userId: string, noteId: string) => {
-      await deleteNote({ userId, noteId })
+   const onDeleteNoteClick = useCallback(async (noteId: string) => {
+      if (userId) await deleteNote({ userId, noteId })
       if (todos) await Promise.all(todos.map(todo => deleteTodo({ userId, todoId: todo.todoId })))
       if (activities) await Promise.all(activities.map(act => deleteActivity({ userId, activityId: act.id })))
-      //firebaseDeletePhotosFolderbyNoteId(noteId)
       navigate(-1)
    }, [userId, noteId])
 
-   const cardActions = useMemo(() => [
-      <div className='card-actionsWrapper'
-         onClick={() => {
-            if (userId && noteId) onDeleteNoteClick(userId, noteId)
-         }}
-      >
-         <DeleteOutlined key="delete" />
-         <span>Удалить</span>
-      </div>,
-      <div className='card-actionsWrapper'
-         onClick={() => { navigate(-1) }}
-      >
-         <EditOutlined key="edit" />
-         <span>Назад</span>
-      </div>,
-   ], [userId, noteId])
+   const onBackClick = useCallback(async (prevUrl: string | undefined, currentUrl: string | undefined, path: string | undefined) => {
+      if (prevUrl && currentUrl && prevUrl !== currentUrl && path) await firebaseDeletePhoto(path);
+      navigate(-1)
+   }, [])
 
    const onFinish = useCallback(async (values: any) => {
       if (userId) {
@@ -74,8 +62,10 @@ const EditNotePage: React.FC = () => {
             title: values.title,
             text: values.text,
             noteDateString: values.date.format('DD/MM/YYYY'),
-            noteId
-         }
+            noteId,
+            imageUrl: values.dragger.url,
+            imagePath: values.dragger.filePath
+         } as Note
          await updateNote({ userId, updatedNote })
          if (values.todos) {
             await Promise.all(values.todos.map((todo: any) => {
@@ -136,9 +126,9 @@ const EditNotePage: React.FC = () => {
          note={note}
          todos={todos}
          activities={activities}
-         cardActions={cardActions}
-         cardTitle={'Отредактировать:'}
-         submitBtnText='Сохранить изменения'
+         formAction='edit'
+         onDeleteNoteClick={onDeleteNoteClick}
+         onBackClick={onBackClick}
       />
       : <Paragraph style={{ textAlign: 'center' }}><Text type='secondary' strong>Запись не найдена!</Text></Paragraph>
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Suspense } from 'react'
-import { EditOutlined } from '@ant-design/icons';
-import { Typography, Card, Collapse, Spin } from 'antd';
+import React, { Suspense } from 'react'
+import { EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Typography, Card, Collapse, Spin, Image } from 'antd';
 import { Note } from './notesApiSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,15 +20,16 @@ const NotesCard: React.FC<NoteCardProps> = ({ note }) => {
 
    const navigate = useNavigate()
 
-   //const [photoUrls, setPhotoUrls] = useState<string[]>([])
-   /*useEffect(() => {
-      firebaseDownloadUrls(note.noteId).then(urls => setPhotoUrls(urls))
-   }, [])*/
-
-   let cardCover = <img
-      alt="card photo"
-      src={'https://phonoteka.org/uploads/posts/2022-09/thumbs/1663691235_13-phonoteka-org-p-rebenok-bez-fona-pinterest-17.png'}
-   />
+   let cardCover = note.imageUrl
+      ?
+      <Image
+         alt="card photo"
+         src={note.imageUrl}
+         preview={{
+            mask: <><EyeOutlined /><Text style={{ color: 'white', marginLeft: '4px' }}>Просмотр</Text></>
+         }}
+      />
+      : <></>
 
    return (
       <Card
